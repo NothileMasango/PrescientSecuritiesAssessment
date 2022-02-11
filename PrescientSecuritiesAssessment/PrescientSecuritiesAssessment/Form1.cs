@@ -107,7 +107,7 @@ namespace PrescientSecuritiesAssessment {
 
                 SqlConnection sqlConnection = new SqlConnection();
                 sqlConnection.ConnectionString = " server = nothilem; database =PAssess; User ID = sa; Password = user123";
-                //  ExcelConn(_path);  
+              
                 string constr = string.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""Excel 12.0 Xml;HDR=YES;""", _path);
                 OleDbConnection Econ = new OleDbConnection(constr);
                 
@@ -129,10 +129,10 @@ namespace PrescientSecuritiesAssessment {
                 Exceldt.AcceptChanges();
                 //creating object of SqlBulkCopy      
                 SqlBulkCopy objbulk = new SqlBulkCopy(sqlConnection);
-                //assigning Destination table name      
-                objbulk.DestinationTableName = "Student";
+                    
+                objbulk.DestinationTableName = "[DailyMTM]";
                 
-                //Mapping Table column    
+                  
                 objbulk.ColumnMappings.Add("[FileDate] ", "[FileDate]");
                 objbulk.ColumnMappings.Add("DOB", "DOB");
                 objbulk.ColumnMappings.Add("[Contract]", "[Contract]");
@@ -145,8 +145,7 @@ namespace PrescientSecuritiesAssessment {
                 objbulk.ColumnMappings.Add("[SpotRate]", "[SpotRate]");
                 objbulk.ColumnMappings.Add("[PremiumOnOption]", "[PremiumOnOption]");
 
-                //inserting Datatable Records to DataBase   
-               //Connection Details    
+                  
                 sqlConnection.Open();
                 objbulk.WriteToServer(Exceldt);
                 sqlConnection.Close();
