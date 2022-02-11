@@ -1,0 +1,35 @@
+CREATE PROCEDURE SP_Total_Contracts_Traded_Report
+
+
+
+@DateFrom date,
+@DateTo date
+AS
+BEGIN
+
+
+
+SET NOCOUNT ON;
+
+
+
+
+SELECT DISTINCT A.FileDate,A.[Contract],(select top 1 SUM(B.ContractsTraded) COntractTraded
+from [SampleDB].[dbo].[DailyMTM] B where B.[Contract]=A.[Contract] group by B.[Contract] )
+AS [Contracts Traded] ,
+(TB.TotalContracts/Total)*100
+AS [% Of Total Contracts Traded]
+FROM [SampleDB].[dbo].[DailyMTM] A
+LEFT JOIN (SELECT SUM(ContractsTraded) as TotalContracts,[Contract],FileDate FROM [SampleDB].[dbo].[DailyMTM]
+WHERE ContractsTraded>0 GROUP BY [Contract],FileDate) TB ON TB.FileDate=A.FileDate
+AND TB.[Contract]=A.[Contract]
+LEFT JOIN (SELECT SUM(ContractsTraded) as Total,FileDate FROM [SampleDB].[dbo].[DailyMTM]
+WHERE ContractsTraded>0 GROUP BY FileDate ) TB1 ON TB1.FileDate=A.FileDate
+WHERE A.ContractsTraded>0 AND A.FileDate BETWEEN @DateFrom AND @DateTo
+ORDER BY A.[Contract]
+
+
+
+END
+GO
+
